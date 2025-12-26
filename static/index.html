@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
+    <meta name="author" content="ChatWoot Mini Site" />
+    <link rel="shortcut icon" href="splash.png" sizes="32x32">
+    <link rel="icon" href="splash.png" type="image/png">
+    <link rel="apple-touch-icon" href="splash.png">
+    <style>
+        body {
+            font-family: "Inter", Arial, sans-serif;
+            background: #f6f7fa;
+            background: #daeef7;
+            background: linear-gradient(90deg,rgba(218, 238, 247, 1) 0%, rgba(240, 246, 255, 1) 38%, rgba(255, 255, 255, 1) 100%);
+        }
+        table { background: #ffffff; border: 1px solid #ddd; margin-top: 10%; border-radius: 20px; }
+        td span {
+            font-size: 3.25rem;
+            font-family: -apple-system, Helvetica Neue, Arial, sans-serif;
+            color: rgb(32 32 32);    
+        }
+    </style>
+</head>
+<body>
+    <table width="600" align="center">
+        <tr><td height="20"></td></tr>
+        <tr><td align="center"><img src="splash.png" width="256" height="256"></td></tr>
+        <tr><td align="center"><span>ChatWoot Mini Site</span></td></tr>
+        <tr><td height="50"></td></tr>
+    </table>
+    <script>
+      (function(d,t) {
+        var BASE_URL="CHATWOOT_BASE_URL";
+        var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+        g.src=BASE_URL+"/packs/js/sdk.js";
+        g.async = true;
+        s.parentNode.insertBefore(g,s);
+        g.onload=function(){
+          window.chatwootSDK.run({
+            websiteToken: "CHATWOOT_WEBSITE_TOKEN",
+            baseUrl: BASE_URL
+          })
+        }
+      })(document,"script");
+    </script>
+</body>
+</html>

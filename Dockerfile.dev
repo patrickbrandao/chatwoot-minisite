@@ -1,0 +1,41 @@
+#========================================================================
+#
+# Container para Mini Site de Chat para ChatWoot
+# - Alpine
+# - Lighttpd
+# - Splash page com chat incluido via javascript
+#
+#========================================================================
+
+# Alpine 3.23.0
+FROM alpine:3.23.0
+
+# Variaveis de ambiente padrao
+ENV \
+    MAINTAINER="Patrick Brandao <patrickbrandao@gmail.com>" \
+    TERM=xterm \
+    SHELL=/bin/ash \
+    PS1='\u@\h:\w\$ ' \
+    LANG=en_US.UTF-8 \
+    LANGUAGE=en_US.UTF-8
+
+# Copiar arquivos e scripts do minisite
+COPY static/   /opt/
+
+# Personalizar Alpine com softwares e arquivos
+RUN ( \
+    apk update  || exit 11; \
+    apk upgrade || exit 12; \
+    apk add lighttpd || exit 21; \
+    mkdir -p /etc/lighttpd || exit 31; \
+    chmod +x /opt/entrypoint.sh || exit 41; \
+)
+
+# Porta 80 HTTP
+EXPOSE 80/tcp
+
+# Script de preparacao do ambiente
+ENTRYPOINT ["/opt/entrypoint.sh"]
+
+# Rodar lighttpd direto
+CMD ["/usr/sbin/lighttpd", "-D", "-f", "/opt/lighttpd.conf"]
