@@ -5,6 +5,7 @@ Mini site para incluir chat do ChatWoot
 
 Container com Lighttpd minimalista com HTML template.
 
+![ChatWoot Mini Site - Screenshot](https://raw.githubusercontent.com/patrickbrandao/chatwoot-minisite/master/contrib/chatwoot-minisite-banner-01.png)
 
 ## Instalar usando docker run
 
