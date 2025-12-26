@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  chatwoot-minisite:
+    image: tmsoftbrasil/chatwoot-minisite:latest
+    container_name: chatwoot-minisite
+    hostname: chatwoot-minisite.intranet.br
+    restart: always
+    
+    environment:
+      - CHATWOOT_BASE_URL=https://chatwoot.meusite.com.br
+      - CHATWOOT_WEBSITE_TOKEN=_coloque_o_token_aqui_
+    
+    ports:
+      - "32080:80"
+    
+    networks:
+      - network_public
+    
+    tmpfs:
+      - /run:rw,noexec,nosuid,size=1m
+    
+    read_only: true
+    
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          memory: 512M
+    
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.chatwoot-minisite.rule=Host(`chatwoot-minisite.${HOSTNAME}`)"
+      - "traefik.http.routers.chatwoot-minisite.entrypoints=web,websecure"
+      - "traefik.http.routers.chatwoot-minisite.tls=true"
+      - "traefik.http.routers.chatwoot-minisite.tls.certresolver=letsencrypt"
+      - "traefik.http.services.chatwoot-minisite.loadbalancer.server.port=80"
+
+networks:
+  network_public:
+    external: true
