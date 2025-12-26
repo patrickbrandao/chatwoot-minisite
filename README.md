@@ -9,40 +9,32 @@ Container com Lighttpd minimalista com HTML template.
 ## Instalar usando docker run
 
 ```bash
-
 #!/bin/sh
 
 # Nome de DNS
-    NAME="chatwoot-minisite"
     FQDN="chatwoot-minisite.$(hostname -f)"
-    LOCAL="$NAME.intranet.br"
-    TZ="America/Sao_Paulo"
 
-    # Imagem
-    IMAGE="tmsoftbrasil/chatwoot-minisite";
-
-# Variaveis de ambiente
+    # Variaveis de ambiente
     # Apontar para URL do ChatWoot (https:// + (nome ou IP) + :porta-se-houver )
     CHATWOOT_BASE_URL="https://chatwoot.meusite.com.br";
 
     # Token para obter o codigo
     CHATWOOT_WEBSITE_TOKEN="_coloque_o_token_aqui_";
 
-# Obter imagem
-    docker pull $IMAGE;
+# Obter imagem atualizada
+    docker pull "tmsoftbrasil/chatwoot-minisite:latest";
 
 # Renovar/rodar:
-    docker rm -f $NAME 2>/dev/null;
+    docker rm -f chatwoot-minisite 2>/dev/null;
     docker run \
         -d --restart=always \
-        --name $NAME -h $LOCAL \
+        --name chatwoot-minisite \
+        -h chatwoot-minisite.intranet.br \
         --network network_public \
         \
         --tmpfs /run:rw,noexec,nosuid,size=1m \
         --read-only \
         --cpus="1.0" --memory=512m --memory-swap=512m \
-        \
-        -e TZ=$TZ \
         \
         -e "CHATWOOT_BASE_URL=$CHATWOOT_BASE_URL" \
         -e "CHATWOOT_WEBSITE_TOKEN=$CHATWOOT_WEBSITE_TOKEN" \
@@ -51,14 +43,62 @@ Container com Lighttpd minimalista com HTML template.
         \
         --label "traefik.enable=true" \
         --label "traefik.enable=true" \
-        --label "traefik.http.routers.$NAME.rule=Host(\`$FQDN\`)" \
-        --label "traefik.http.routers.$NAME.entrypoints=web,websecure" \
-        --label "traefik.http.routers.$NAME.tls=true" \
-        --label "traefik.http.routers.$NAME.tls.certresolver=letsencrypt" \
-        --label "traefik.http.services.$NAME.loadbalancer.server.port=80" \
+        --label "traefik.http.routers.chatwoot-minisite.rule=Host(\`$FQDN\`)" \
+        --label "traefik.http.routers.chatwoot-minisite.entrypoints=web,websecure" \
+        --label "traefik.http.routers.chatwoot-minisite.tls=true" \
+        --label "traefik.http.routers.chatwoot-minisite.tls.certresolver=letsencrypt" \
+        --label "traefik.http.services.chatwoot-minisite.loadbalancer.server.port=80" \
         \
-        $IMAGE;
+        tmsoftbrasil/chatwoot-minisite:latest;
 
+```
+
+## Versão usando stack
+
+```yaml
+version: '3.8'
+
+services:
+  chatwoot-minisite:
+    image: tmsoftbrasil/chatwoot-minisite:latest
+    container_name: chatwoot-minisite
+    hostname: chatwoot-minisite.intranet.br
+    restart: always
+    
+    environment:
+      - CHATWOOT_BASE_URL=https://chatwoot.meusite.com.br
+      - CHATWOOT_WEBSITE_TOKEN=_coloque_o_token_aqui_
+    
+    ports:
+      - "32080:80"
+    
+    networks:
+      - network_public
+    
+    tmpfs:
+      - /run:rw,noexec,nosuid,size=1m
+    
+    read_only: true
+    
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          memory: 512M
+    
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.chatwoot-minisite.rule=Host(`chatwoot-minisite.${HOSTNAME}`)"
+      - "traefik.http.routers.chatwoot-minisite.entrypoints=web,websecure"
+      - "traefik.http.routers.chatwoot-minisite.tls=true"
+      - "traefik.http.routers.chatwoot-minisite.tls.certresolver=letsencrypt"
+      - "traefik.http.services.chatwoot-minisite.loadbalancer.server.port=80"
+
+networks:
+  network_public:
+    external: true
 ```
 
 
@@ -74,5 +114,3 @@ docker build . -t chatwoot-minisite;
 ```
 
 Troque "tmsoftbrasil/chatwoot-minisite" por "chatwoot-minisite" para usar sua imagem local.
-
-
